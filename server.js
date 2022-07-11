@@ -1,17 +1,14 @@
 const express = require('express');
-const app = express();
-const socketio = require('socket.io');
-
-app.use(express.static(__dirname + '/public'));
-
-const expressServer = app.listen(8000);
-const io = socketio(expressServer);
+const path = require('path');
+var app = express();
+var server = app.listen(3000, function () {
+  console.log('Listening on port 3000');
+});
+const io = require('socket.io')(server, {
+  allowEIO3: true, // false by default
+});
+app.use(express.static(path.join(__dirname, ''))); //root파일을 시작으로 인식
+var userConnections = [];
 io.on('connection', (socket) => {
-  socket.emit('messageFromServer', { data: 'Welcome to the socketio server' });
-  socket.on('messageToServer', (dataFromClient) => {
-    console.log(dataFromClient);
-  });
-  socket.on('newMessageToServer', (msg) => {
-    io.emit('messageToClients', { text: msg.text });
-  });
+  console.log('socket id is ', socket.id);
 });
